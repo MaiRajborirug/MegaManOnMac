@@ -7,16 +7,19 @@ YOU NEED
   The game is not included.
 
 INSTALL (once)
-  1. Drag this whole "MegaManX4Recomp" folder to your Documents folder.
-     Keep the app inside it: memory cards and settings are saved next to it.
+  1. Drag "Mega Man X4 Recompiled" onto Applications (or anywhere you like).
   2. Open Terminal and paste this line, then press Return:
-       xattr -dr com.apple.quarantine ~/Documents/MegaManX4Recomp*
+       xattr -dr com.apple.quarantine "/Applications/Mega Man X4 Recompiled.app"
      (The app is not signed by Apple, so macOS would otherwise block it.)
   3. If your disc image is a .zip, double-click it. Finder unzips it into a
      folder beside the zip.
 
+  Memory cards, settings and mod choices are kept in
+  ~/Library/Application Support/MegaManX4Recomp, so replacing the app with a
+  newer version keeps them.
+
 FIRST LAUNCH
-  1. Open "Mega Man X4 Recompiled" in the folder from step 1.
+  1. Open "Mega Man X4 Recompiled".
   2. Click the Disc row and choose the .cue file from the unzipped folder
      (or the .bin if there is no .cue). Keep the .cue and .bin together,
      with their original names.

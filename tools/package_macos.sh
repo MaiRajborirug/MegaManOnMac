@@ -22,6 +22,7 @@ bash "$REPO/psxrecomp-v4/tools/package_release_macos.sh" \
 
 STAGE="$(find "$OUT/stage" -mindepth 1 -maxdepth 1 -type d | head -1)"
 cp "$REPO/packaging/macos/START_HERE.txt" "$STAGE/START_HERE.txt"
+ln -sfn /Applications "$STAGE/Applications"
 DMG="$OUT/$(basename "$STAGE" | sed "s/-macos-/-$VERSION-macos-/").dmg"
 rm -f "$DMG"
 hdiutil create -volname "Mega Man X4 Recompiled" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
