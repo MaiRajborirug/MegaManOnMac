@@ -69,11 +69,37 @@ static uint32_t rgba_of(uint16_t c) {
     return r | (g << 8) | (b << 16) | 0xFF000000u;
 }
 
+/* The menu CLUTs as the title screen leaves them. A stage reuses rows
+ * 480/481 for its own palettes while the font and art pages stay put, so the
+ * page decodes through these rather than what VRAM holds when OPTION opens
+ * from the pause menu. Row 480 is indexed by clut_x / 16. */
+static const uint16_t kMenuCluts[7][16] = {
+    {0x0000, 0x8000, 0x8000, 0x8421, 0x8C63, 0xA94A, 0xAD6B, 0xB18C,
+     0xBDEF, 0xC631, 0xD6B5, 0xE318, 0xEB5A, 0xF39C, 0xFFFF, 0x8C67},  /* x 0: white */
+    {0x0000, 0x8016, 0xA576, 0xB5AD, 0xC074, 0xBD95, 0xDDC7, 0xCD20,
+     0xA200, 0xAE2B, 0xEB5A, 0xD294, 0xC210, 0xA94A, 0x90A5, 0x8421},  /* x 16: buttons */
+    {0x0000, 0xA000, 0xB021, 0xC060, 0xD102, 0xD944, 0xE165, 0xE986,
+     0xF1E9, 0xFA4C, 0xFAAF, 0xFAD0, 0xFB54, 0xFB96, 0xFFD8, 0x8C67},  /* x 32: title */
+    {0x0000, 0x800C, 0x8030, 0x8074, 0x8118, 0x815C, 0x817E, 0x819E,
+     0x81FE, 0x823E, 0x865E, 0x8A7E, 0x92BE, 0x96DE, 0x9F1E, 0x8067},  /* x 48: selected */
+    {0}, {0},
+    {0x0000, 0xFFFF, 0xF39C, 0xEB39, 0xDED7, 0xD674, 0xCA11, 0xC1AF,
+     0xB54C, 0xACEA, 0xACEA, 0x98C6, 0x8000, 0x8000, 0x8000, 0x8000},  /* x 96: selector */
+};
+static const uint16_t kBackdropClut[16] = {  /* (192, 481) */
+    0x0000, 0x8C00, 0x9000, 0x9400, 0x9C00, 0xA400, 0xA400, 0xA801,
+    0xAC01, 0xB021, 0xB821, 0xBC41, 0xC441, 0xCC60, 0xD060, 0xD880};
+
 /* Decode a 4bpp region (texels u0..u0+w, v0..v0+h of a page) through one
  * CLUT into the atlas at (ax, ay). */
 static int decode(int page_x, int u0, int v0, int w, int h, int clut_x, int clut_y, int ax, int ay) {
     uint16_t clut[16];
-    if (!psx_mod_read_vram(clut_x, clut_y, 16, 1, clut)) return 0;
+    if (clut_y == 480 && clut_x / 16 < 7 && kMenuCluts[clut_x / 16][1])
+        memcpy(clut, kMenuCluts[clut_x / 16], sizeof clut);
+    else if (clut_y == 481 && clut_x == 192)
+        memcpy(clut, kBackdropClut, sizeof clut);
+    else if (!psx_mod_read_vram(clut_x, clut_y, 16, 1, clut))
+        return 0;
     if (!psx_mod_read_vram(page_x + u0 / 4, PAGE_Y + v0, w / 4, h, s_vram)) return 0;
     for (int y = 0; y < h; ++y)
         for (int x = 0; x < w; ++x) {
