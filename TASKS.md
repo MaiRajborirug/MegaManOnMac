@@ -77,6 +77,10 @@
 - [x] Menu sounds: page cues -> X4 sfx 0x8001540C (0x0C move, 0x22 select); page no longer pauses.
 - [x] Framework: blanked display keeps presenting while an overlay holds input (main.cpp).
 - [x] Menu sounds confirmed in game by ear.
+- [x] Capcom's own prompts name the key: "✕ (W) ···CHOOSE" (src/mods/mmx4_prompt_keys.c, feature
+      prompt-keys). Object renderer 0x80024334 drawn twice per call; parens drawn into empty item-set
+      cells 0xBE/0xBF via psx_mod_write_vram. Verified on OPTION.
+- [ ] Check prompt keys on other screens with ✕/△ prompts (stage select, weapon get, game over).
 - [ ] Reset to PC layout (not in the approved design; decide whether to add a row).
 - [ ] Framework: per-game action labels from game.toml `[controls]` (labels live in the X4 mod now).
 - [ ] X4: pin default table after load (hook after func_8001C210/func_8001C30C).

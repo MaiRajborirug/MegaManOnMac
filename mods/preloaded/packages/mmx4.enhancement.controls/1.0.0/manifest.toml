@@ -21,3 +21,14 @@ default_enabled = true
 [[plugin]]
 feature = "controls-page"
 id = "mmx4.controls-page"
+
+[[feature]]
+id = "prompt-keys"
+name = "Keys in Button Prompts"
+description = "Capcom's button prompts name your keyboard key: \"✕ (W) ···CHOOSE\". Off keeps the original prompts."
+group = "Input"
+default_enabled = true
+
+[[plugin]]
+feature = "prompt-keys"
+id = "mmx4.prompt-keys"
