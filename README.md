@@ -65,8 +65,9 @@ To give the game to another Apple Silicon Mac, `brew install dylibbundler`, buil
 `build-macos` as shown at the top of [tools/package_macos.sh](tools/package_macos.sh)
 (with Homebrew, not conda, first on `PATH`), then run `tools/package_macos.sh`. It writes
 `release-macos/MegaManX4Recomp-<version>-macos-arm64.dmg`: the app with its libraries,
-an empty `saves/` and [START_HERE.txt](packaging/macos/START_HERE.txt). No disc ships; the
-player picks their own `.cue` or `.bin` on first launch.
+an Applications link and [START_HERE.txt](packaging/macos/START_HERE.txt). No disc ships; the
+player picks their own `.cue` or `.bin` on first launch. Saves and settings live in
+`~/Library/Application Support/MegaManX4Recomp`.
 
 ## Two heroes, one campaign
 
