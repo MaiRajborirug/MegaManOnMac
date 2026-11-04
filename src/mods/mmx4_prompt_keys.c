@@ -150,38 +150,61 @@ static Span row_span(const Rec* a, int n, const Rec* b, int m, int dy) {
     return s;
 }
 
-/* A widened row closes gaps wider than 16 pixels (Capcom spaces its two
- * prompts far apart), then centres on where it stood. 0 if it cannot fit the
- * signed-byte offsets. */
-static int fit_row(Rec* a, int n, Rec* b, int m, int dy, Span before) {
-    for (;;) {
-        int gap_at = 1 << 20, gap = 0;
-        for (int k = 0; k < n + m; ++k) {
-            const Rec* r = k < n ? &a[k] : &b[k - n];
-            if (r->dy != dy) continue;
-            int prev_end = -(1 << 20);
-            for (int j = 0; j < n + m; ++j) {
-                const Rec* q = j < n ? &a[j] : &b[j - n];
-                if (q->dy == dy && q->dx < r->dx && q->dx + width_of(q) > prev_end) prev_end = q->dx + width_of(q);
-            }
-            if (prev_end > -(1 << 20) && r->dx - prev_end > 16 && r->dx < gap_at) { gap_at = r->dx; gap = r->dx - prev_end - 16; }
-        }
-        const Span now = row_span(a, n, b, m, dy);
-        if (now.lo >= -128 && now.hi <= 127 + 8) break;
-        if (!gap) return 0;
-        for (int k = 0; k < n + m; ++k) {
-            Rec* r = k < n ? &a[k] : &b[k - n];
-            if (r->dy == dy && r->dx >= gap_at) r->dx -= gap;
-        }
+/* Lowest and highest record offset on the row (not its pixel extent). */
+static Span row_offsets(const Rec* a, int n, const Rec* b, int m, int dy) {
+    Span s = {1 << 20, -(1 << 20)};
+    for (int k = 0; k < n + m; ++k) {
+        const Rec* r = k < n ? &a[k] : &b[k - n];
+        if (r->dy != dy) continue;
+        if (r->dx < s.lo) s.lo = r->dx;
+        if (r->dx > s.hi) s.hi = r->dx;
     }
-    const Span now = row_span(a, n, b, m, dy);
-    const int move = (before.lo + before.hi) / 2 - (now.lo + now.hi) / 2;
+    return s;
+}
+
+static void shift_row(Rec* a, int n, Rec* b, int m, int dy, int from, int by) {
     for (int k = 0; k < n + m; ++k) {
         Rec* r = k < n ? &a[k] : &b[k - n];
-        if (r->dy == dy) r->dx += move;
+        if (r->dy == dy && r->dx >= from) r->dx += by;
     }
-    const Span placed = row_span(a, n, b, m, dy);
-    return placed.lo >= -128 && placed.hi <= 127 + 8;
+}
+
+/* Closes the leftmost gap wider than keep pixels down to keep. 0 if none. */
+static int close_gap(Rec* a, int n, Rec* b, int m, int dy, int keep) {
+    int gap_at = 1 << 20, gap = 0;
+    for (int k = 0; k < n + m; ++k) {
+        const Rec* r = k < n ? &a[k] : &b[k - n];
+        if (r->dy != dy) continue;
+        int prev_end = -(1 << 20);
+        for (int j = 0; j < n + m; ++j) {
+            const Rec* q = j < n ? &a[j] : &b[j - n];
+            if (q->dy == dy && q->dx < r->dx && q->dx + width_of(q) > prev_end) prev_end = q->dx + width_of(q);
+        }
+        if (prev_end > -(1 << 20) && r->dx - prev_end > keep && r->dx < gap_at) {
+            gap_at = r->dx;
+            gap = r->dx - prev_end - keep;
+        }
+    }
+    if (gap) shift_row(a, n, b, m, dy, gap_at, -gap);
+    return gap;
+}
+
+/* A widened row closes gaps wider than 16 pixels (Capcom spaces its two
+ * prompts far apart), then 8 if a long key name still overflows, centres on
+ * where it stood and slides back inside the signed-byte offsets. 0 if it
+ * cannot fit them. */
+static int fit_row(Rec* a, int n, Rec* b, int m, int dy, Span before) {
+    static const int kKeep[2] = {16, 8};
+    for (int pass = 0; pass < 2; ++pass)
+        while (row_offsets(a, n, b, m, dy).hi - row_offsets(a, n, b, m, dy).lo > 255 &&
+               close_gap(a, n, b, m, dy, kKeep[pass])) {}
+    const Span now = row_span(a, n, b, m, dy);
+    shift_row(a, n, b, m, dy, -(1 << 20), (before.lo + before.hi) / 2 - (now.lo + now.hi) / 2);
+    const Span at = row_offsets(a, n, b, m, dy);
+    if (at.lo < -128) shift_row(a, n, b, m, dy, -(1 << 20), -128 - at.lo);
+    else if (at.hi > 127) shift_row(a, n, b, m, dy, -(1 << 20), 127 - at.hi);
+    const Span placed = row_offsets(a, n, b, m, dy);
+    return placed.lo >= -128 && placed.hi <= 127;
 }
 
 static void write_recs(uint32_t at, const Rec* r, int n) {

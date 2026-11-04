@@ -34,15 +34,17 @@ What I added:
 | Change | Where |
 | --- | --- |
 | **OPTION → BUTTON CONFIG** opens a Controls page drawn in X4's own font, cursor, backdrop and menu sounds. Pick **KEYBOARD** or **CONTROLLER**, highlight an action, press the new key or button. A clash swaps the two keys; a host hotkey (F10, F7, ...) asks for a second press. Changes save to `keybinds.ini` / `input.ini` and apply in game right away. | `src/mods/mmx4_controls.c`, recomp-ui `psx_controls_page*.cpp` |
-| Capcom's button prompts name your key: `✕ (W) ···CHOOSE  △ (S) ···CANCEL`. | `src/mods/mmx4_prompt_keys.c` |
+| Capcom's button prompts name your key: `✕ (SPACE) ···CHOOSE  △ (A) ···CANCEL` on OPTION, CONTINUE, BUTTON CONFIG and the other menus with that footer. Long names (`LEFT SHIFT` → `LSHIFT`) are shortened; a row that still cannot fit keeps Capcom's prompt. | `src/mods/mmx4_prompt_keys.c` |
 | Framework hooks: `psx_mod_read_vram` / `psx_mod_write_vram`, and keep presenting while an overlay is open. | psxrecomp `runtime/` |
 
 Both are features of the **X4 Controls** mod (`mods/preloaded/packages/mmx4.enhancement.controls`).
 
 <p align="center">
-  <img src="docs/images/controls_option.png" width="32%" alt="OPTION menu with key names in the prompts">
-  <img src="docs/images/controls_chooser.png" width="32%" alt="BUTTON CONFIG chooser: Keyboard, Controller, Exit">
-  <img src="docs/images/controls_keyboard.png" width="32%" alt="Keyboard config listing each action and its key">
+  <img src="docs/images/controls_option.png" width="48%" alt="OPTION menu with key names in the prompts">
+  <img src="docs/images/controls_continue.png" width="48%" alt="CONTINUE screen with key names in the prompts">
+  <br>
+  <img src="docs/images/controls_chooser.png" width="48%" alt="BUTTON CONFIG chooser: Keyboard, Controller, Exit">
+  <img src="docs/images/controls_keyboard.png" width="48%" alt="Keyboard config listing each action and its key">
 </p>
 
 **Platforms:** built and played on macOS Apple Silicon (arm64, SDL3, OpenGL).
