@@ -20,6 +20,45 @@ Bring a friend through X's or Zero's campaign, on one computer or over netplay.
   <img src="docs/images/coop-jungle.png" width="640" alt="X and Zero together at the Jungle waterfall, with vertically stacked lifebars">
 </p>
 
+## This fork: in-game keyboard config (macOS)
+
+Forked from [mstan/MegaManX4Recomp](https://github.com/mstan/MegaManX4Recomp) at 1.0.28
+(`ae903a8`). The submodules point at my forks of
+[RetroPortingToolKit/psxrecomp](https://github.com/RetroPortingToolKit/psxrecomp) →
+[MaiRajborirug/psxrecomp](https://github.com/MaiRajborirug/psxrecomp) and
+[RetroPortingToolKit/recomp-ui](https://github.com/RetroPortingToolKit/recomp-ui) →
+[MaiRajborirug/recomp-ui](https://github.com/MaiRajborirug/recomp-ui).
+
+What I added:
+
+| Change | Where |
+| --- | --- |
+| **OPTION → BUTTON CONFIG** opens a Controls page drawn in X4's own font, cursor, backdrop and menu sounds. Pick **KEYBOARD** or **CONTROLLER**, highlight an action, press the new key or button. A clash swaps the two keys; a host hotkey (F10, F7, ...) asks for a second press. Changes save to `keybinds.ini` / `input.ini` and apply in game right away. | `src/mods/mmx4_controls.c`, recomp-ui `psx_controls_page*.cpp` |
+| Capcom's button prompts name your key: `✕ (W) ···CHOOSE  △ (S) ···CANCEL`. | `src/mods/mmx4_prompt_keys.c` |
+| Framework hooks: `psx_mod_read_vram` / `psx_mod_write_vram`, and keep presenting while an overlay is open. | psxrecomp `runtime/` |
+
+Both are features of the **X4 Controls** mod (`mods/preloaded/packages/mmx4.enhancement.controls`).
+
+<p align="center">
+  <img src="docs/images/controls_option.png" width="32%" alt="OPTION menu with key names in the prompts">
+  <img src="docs/images/controls_chooser.png" width="32%" alt="BUTTON CONFIG chooser: Keyboard, Controller, Exit">
+  <img src="docs/images/controls_keyboard.png" width="32%" alt="Keyboard config listing each action and its key">
+</p>
+
+**Platforms:** built and played on macOS Apple Silicon (arm64, SDL3, OpenGL).
+macOS Intel is not built or tested (needs an x86_64 SDL3); the new code has no
+architecture-specific parts. Build on a Mac (after generating code as in
+[DEVELOPMENT.md](docs/DEVELOPMENT.md)):
+
+```sh
+brew install cmake ninja sdl3 python
+git clone --recurse-submodules https://github.com/MaiRajborirug/MegaManX4Recomp.git
+cd MegaManX4Recomp
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSX_SDL_BACKEND=SDL3 -DPSX_RECOMP_UI=ON
+cmake --build build --parallel
+cd build && ./MegaManX4Recomp
+```
+
 ## Two heroes, one campaign
 
 Play X and Zero simultaneously, with their own attacks, voices and effects.
