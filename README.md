@@ -61,6 +61,13 @@ cmake --build build --parallel
 cd build && ./MegaManX4Recomp
 ```
 
+To give the game to another Apple Silicon Mac, `brew install dylibbundler`, build
+`build-macos` as shown at the top of [tools/package_macos.sh](tools/package_macos.sh)
+(with Homebrew, not conda, first on `PATH`), then run `tools/package_macos.sh`. It writes
+`release-macos/MegaManX4Recomp-<version>-macos-arm64.dmg`: the app with its libraries,
+an empty `saves/` and [START_HERE.txt](packaging/macos/START_HERE.txt). No disc ships; the
+player picks their own `.cue` or `.bin` on first launch.
+
 ## Two heroes, one campaign
 
 Play X and Zero simultaneously, with their own attacks, voices and effects.

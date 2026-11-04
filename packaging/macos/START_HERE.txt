@@ -1,0 +1,31 @@
+Mega Man X4 Recompiled (macOS, Apple Silicon)
+=============================================
+
+YOU NEED
+  An Apple Silicon Mac (M1 or newer) and your own Mega Man X4 (USA,
+  SLUS-00561) disc image: a .cue + .bin pair (a .bin alone also works).
+  The game is not included.
+
+INSTALL (once)
+  1. Drag this whole "MegaManX4Recomp" folder to your Documents folder.
+     Keep the app inside it: memory cards and settings are saved next to it.
+  2. Open Terminal and paste this line, then press Return:
+       xattr -dr com.apple.quarantine ~/Documents/MegaManX4Recomp*
+     (The app is not signed by Apple, so macOS would otherwise block it.)
+  3. If your disc image is a .zip, double-click it. Finder unzips it into a
+     folder beside the zip.
+
+FIRST LAUNCH
+  1. Open "Mega Man X4 Recompiled" in the folder from step 1.
+  2. Click the Disc row and choose the .cue file from the unzipped folder
+     (or the .bin if there is no .cue). Keep the .cue and .bin together,
+     with their original names.
+  3. The launcher checks that it is the original USA disc, then Play turns on.
+  4. Press Play. The disc is remembered; next time just open the app and
+     press Play. If you move the disc folder, choose it again.
+
+CONTROLS
+  Keyboard and controllers both work. In the game, OPTION -> BUTTON CONFIG
+  opens the Controls page: pick Keyboard or Controller, highlight an action,
+  press the new key or button. The menus show which key does what.
+  Ctrl+L (or fn+F10) opens the settings menu.
